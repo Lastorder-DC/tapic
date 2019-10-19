@@ -18,12 +18,6 @@ module.exports = function (TAPIC, state, _getJSON) {
     );
 
     function joinCommunity(community_id) {
-      _getJSON('https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community/' + community_id,
-        '&_method=put',
-        function (res) {
-          // do nothing - there's no response from twitch
-        }
-      );
     }
     
   };

@@ -54,30 +54,12 @@ module.exports = function (state, _event, _getJSON) {
       }
     );
 
-    _getJSON(
-      'https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community',
-      function (res) {
-        if (res) {
-          state.community.name = res.name;
-          state.community.description = res.rescription;
-          state.community.descriptionHTML = res.description_html;
-          state.community.rules = res.rules;
-          state.community.rulesHTML = res.rules_html;
-          state.community.summary = res.summary;
-        }
-        else {
-          state.community.name = '';
-          state.community.description = '';
-          state.community.descriptionHTML = '';
-          state.community.rules = '';
-          state.community.rulesHTML = '';
-          state.community.summary = '';
-        }
-
-        community = true;
-        _pingFinished();
-      }
-    );
+    state.community.name = '';
+    state.community.description = '';
+    state.community.descriptionHTML = '';
+    state.community.rules = '';
+    state.community.rulesHTML = '';
+    state.community.summary = '';
 
     _getJSON(
       'https://api.twitch.tv/kraken/channels/' + state.channel_id + '/follows',
@@ -125,17 +107,6 @@ module.exports = function (state, _event, _getJSON) {
         state.chatters.viewers = res.chatters.viewers.slice();
 
         chatters = true;
-        _pingFinished();
-      }
-    );
-
-    // This is an undocumented/unsupported API - it hasn't been udpated to v5. It uses channel NAME
-    _getJSON(
-      'https://api.twitch.tv//api/channels/' + state.channel + '/ember',
-      function (res) {
-        state.teamDisplayName = res.primary_team_display_name;
-        state.teamName = res.primary_team_name;
-        teams = true;
         _pingFinished();
       }
     );

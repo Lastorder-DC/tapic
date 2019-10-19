@@ -4,11 +4,5 @@ module.exports = function (TAPIC, state, _getJSON) {
   * @function leaveCommunity
   */
   TAPIC.leaveCommunity = function () {
-    _getJSON('https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community/',
-      '&_method=delete',
-      function (res) {
-        // do nothing - there's no response from twitch
-      }
-    );
   };
 };

@@ -1,3 +1,4 @@
 node_modules/
 examples/oauth.txt
 npm-debug.log
+.idea/

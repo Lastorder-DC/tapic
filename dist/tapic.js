@@ -3,7 +3,7 @@
 * Twitch API & Chat in javascript.
 * @author Skhmt
 * @license MIT
-* @version 5.0.2
+* @version 5.1.0
 *
 * @module TAPIC
 */
@@ -60,14 +60,14 @@ if (typeof module == 'object') __nodeModule__ = module;
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(1);
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	// exporting if node, defining as a global function if browser
 	if (__webpack_require__(2)) __nodeModule__.exports = define_TAPIC();
@@ -174,9 +174,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	}
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*
 	  returns true for node.js or nw.js
@@ -192,9 +192,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	})();
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = {
 	  refreshRate: 5,
@@ -243,9 +243,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC) {
 	  let _events = new Map();
@@ -298,9 +298,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = function (state) {
 	  function _getJSON (path, params, callback) {
@@ -392,15 +392,15 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = require('https');
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (state, _event) {
 	  function _parseMessage (text) {
@@ -534,9 +534,15 @@ if (typeof module == 'object') __nodeModule__ = module;
 	    _event('message', {
 	      from: msgTags.get('display-name'),
 	      color: msgTags.get('color'),
-	      mod: (msgTags.get('mod') == 1),
-	      sub: (msgTags.get('subscriber') == 1),
-	      turbo: (msgTags.get('turbo') == 1),
+	      mod: (msgTags.get('badges').indexOf("admin") !== -1 ||
+	          msgTags.get('badges').indexOf("broadcaster") !== -1 ||
+	          msgTags.get('badges').indexOf("global_mod") !== -1 ||
+	          msgTags.get('badges').indexOf("moderator") !== -1 ||
+	          msgTags.get('badges').indexOf("staff") !== -1),
+	      sub: (msgTags.get('badges').indexOf("subscriber") !== -1 ||
+	          msgTags.get('badges').indexOf("founder") !== -1),
+	      founder: (msgTags.get('badges').indexOf("founder") !== -1),
+	      turbo: (msgTags.get('badges').indexOf("turbo") !== -1),
 	      streamer: (msgTags.get('display-name').toLowerCase() === state.channel.toLowerCase()),
 	      action: action,
 	      text: joinedText,
@@ -633,9 +639,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = function (state, _event, _getJSON) {
 
@@ -693,30 +699,12 @@ if (typeof module == 'object') __nodeModule__ = module;
 	      }
 	    );
 
-	    _getJSON(
-	      'https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community',
-	      function (res) {
-	        if (res) {
-	          state.community.name = res.name;
-	          state.community.description = res.rescription;
-	          state.community.descriptionHTML = res.description_html;
-	          state.community.rules = res.rules;
-	          state.community.rulesHTML = res.rules_html;
-	          state.community.summary = res.summary;
-	        }
-	        else {
-	          state.community.name = '';
-	          state.community.description = '';
-	          state.community.descriptionHTML = '';
-	          state.community.rules = '';
-	          state.community.rulesHTML = '';
-	          state.community.summary = '';
-	        }
-
-	        community = true;
-	        _pingFinished();
-	      }
-	    );
+	    state.community.name = '';
+	    state.community.description = '';
+	    state.community.descriptionHTML = '';
+	    state.community.rules = '';
+	    state.community.rulesHTML = '';
+	    state.community.summary = '';
 
 	    _getJSON(
 	      'https://api.twitch.tv/kraken/channels/' + state.channel_id + '/follows',
@@ -768,17 +756,6 @@ if (typeof module == 'object') __nodeModule__ = module;
 	      }
 	    );
 
-	    // This is an undocumented/unsupported API - it hasn't been udpated to v5. It uses channel NAME
-	    _getJSON(
-	      'https://api.twitch.tv//api/channels/' + state.channel + '/ember',
-	      function (res) {
-	        state.teamDisplayName = res.primary_team_display_name;
-	        state.teamName = res.primary_team_name;
-	        teams = true;
-	        _pingFinished();
-	      }
-	    );
-
 	    setTimeout(function () {
 	      if (!__webpack_require__(2)) {
 	        document.getElementById('tapicJsonpContainer').innerHTML = '';
@@ -791,9 +768,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (state, _getJSON) {
 	  function _getSubBadgeUrl (callback) {
@@ -813,15 +790,15 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = require('ws');
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = function (state, _ws, _parseMessage, _event, callback) {
 	  // handling messages
@@ -860,9 +837,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = function (state, _event) {
 	  let ps;
@@ -1042,9 +1019,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _ws, _getSubBadgeUrl, _pingAPI, _getJSON) {
 	  /**
@@ -1109,9 +1086,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _ws, _event) {
 	  /**
@@ -1133,9 +1110,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, _ws, _event) {
 	  /**
@@ -1161,9 +1138,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, _getJSON) {
 	  /**
@@ -1195,9 +1172,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _getJSON) {
 	  /**
@@ -1235,9 +1212,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state) {
 	  /**
@@ -1607,9 +1584,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = function (TAPIC, state) {
 	  /**
@@ -1652,9 +1629,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _getJSON) {
 	  /**
@@ -1680,9 +1657,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _getJSON) {
 	  /**
@@ -1704,21 +1681,15 @@ if (typeof module == 'object') __nodeModule__ = module;
 	    );
 
 	    function joinCommunity(community_id) {
-	      _getJSON('https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community/' + community_id,
-	        '&_method=put',
-	        function (res) {
-	          // do nothing - there's no response from twitch
-	        }
-	      );
 	    }
 	    
 	  };
 	};
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state, _getJSON) {
 	  /**
@@ -1726,19 +1697,13 @@ if (typeof module == 'object') __nodeModule__ = module;
 	  * @function leaveCommunity
 	  */
 	  TAPIC.leaveCommunity = function () {
-	    _getJSON('https://api.twitch.tv/kraken/channels/' + state.channel_id + '/community/',
-	      '&_method=delete',
-	      function (res) {
-	        // do nothing - there's no response from twitch
-	      }
-	    );
 	  };
 	};
 
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, _getJSON) {
 	  /**
@@ -1762,9 +1727,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state) {
 	  /**
@@ -1783,9 +1748,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, _getJSON) {
 	  /**
@@ -1812,9 +1777,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function (TAPIC, state) {
 	  /**
@@ -1843,9 +1808,9 @@ if (typeof module == 'object') __nodeModule__ = module;
 	};
 
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	* Every RAW TMI message from the standard chat server. You most likely won't be using this unless you need to parse for something that TAPIC.js doesn't already have a listener for.
@@ -2004,5 +1969,5 @@ if (typeof module == 'object') __nodeModule__ = module;
 	* @property {string} message - the message
 	*/
 
-/***/ }
+/***/ })
 /******/ ]);

@@ -130,9 +130,15 @@ module.exports = function (state, _event) {
     _event('message', {
       from: msgTags.get('display-name'),
       color: msgTags.get('color'),
-      mod: (msgTags.get('mod') == 1),
-      sub: (msgTags.get('subscriber') == 1),
-      turbo: (msgTags.get('turbo') == 1),
+      mod: (msgTags.get('badges').indexOf("admin") !== -1 ||
+          msgTags.get('badges').indexOf("broadcaster") !== -1 ||
+          msgTags.get('badges').indexOf("global_mod") !== -1 ||
+          msgTags.get('badges').indexOf("moderator") !== -1 ||
+          msgTags.get('badges').indexOf("staff") !== -1),
+      sub: (msgTags.get('badges').indexOf("subscriber") !== -1 ||
+          msgTags.get('badges').indexOf("founder") !== -1),
+      founder: (msgTags.get('badges').indexOf("founder") !== -1),
+      turbo: (msgTags.get('badges').indexOf("turbo") !== -1),
       streamer: (msgTags.get('display-name').toLowerCase() === state.channel.toLowerCase()),
       action: action,
       text: joinedText,

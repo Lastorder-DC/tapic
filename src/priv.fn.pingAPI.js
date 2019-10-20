@@ -7,8 +7,10 @@ module.exports = function (state, _event, _getJSON) {
     let channels = false;
     let follows = false;
     let chatters = false;
-    let community = false;
-    let teams = false;
+
+    // api request removed due to twitch v3 api shutdown
+    let community = true;
+    let teams = true;
 
     function _pingFinished() {
       if (streams && channels && follows && chatters && community && teams) {

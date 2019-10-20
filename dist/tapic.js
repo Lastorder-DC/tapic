@@ -3,7 +3,7 @@
 * Twitch API & Chat in javascript.
 * @author Skhmt
 * @license MIT
-* @version 5.1.0
+* @version 5.1.1
 *
 * @module TAPIC
 */
@@ -652,8 +652,10 @@ if (typeof module == 'object') __nodeModule__ = module;
 	    let channels = false;
 	    let follows = false;
 	    let chatters = false;
-	    let community = false;
-	    let teams = false;
+
+	    // api request removed due to twitch v3 api shutdown
+	    let community = true;
+	    let teams = true;
 
 	    function _pingFinished() {
 	      if (streams && channels && follows && chatters && community && teams) {

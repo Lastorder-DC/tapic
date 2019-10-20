@@ -3,7 +3,7 @@
 * Twitch API & Chat in javascript.
 * @author Skhmt
 * @license MIT
-* @version 5.1.1
+* @version 5.1.2
 *
 * @module TAPIC
 */
@@ -534,15 +534,15 @@ if (typeof module == 'object') __nodeModule__ = module;
 	    _event('message', {
 	      from: msgTags.get('display-name'),
 	      color: msgTags.get('color'),
-	      mod: (msgTags.get('badges').indexOf("admin") !== -1 ||
-	          msgTags.get('badges').indexOf("broadcaster") !== -1 ||
-	          msgTags.get('badges').indexOf("global_mod") !== -1 ||
-	          msgTags.get('badges').indexOf("moderator") !== -1 ||
-	          msgTags.get('badges').indexOf("staff") !== -1),
-	      sub: (msgTags.get('badges').indexOf("subscriber") !== -1 ||
-	          msgTags.get('badges').indexOf("founder") !== -1),
-	      founder: (msgTags.get('badges').indexOf("founder") !== -1),
-	      turbo: (msgTags.get('badges').indexOf("turbo") !== -1),
+	      mod: (msgTags.get('badges').join(" ").indexOf("admin") !== -1 ||
+	          msgTags.get('badges').join(" ").indexOf("broadcaster") !== -1 ||
+	          msgTags.get('badges').join(" ").indexOf("global_mod") !== -1 ||
+	          msgTags.get('badges').join(" ").indexOf("moderator") !== -1 ||
+	          msgTags.get('badges').join(" ").indexOf("staff") !== -1),
+	      sub: (msgTags.get('badges').join(" ").indexOf("subscriber") !== -1 ||
+	          msgTags.get('badges').join(" ").indexOf("founder") !== -1),
+	      founder: (msgTags.get('badges').join(" ").indexOf("founder") !== -1),
+	      turbo: (msgTags.get('badges').join(" ").indexOf("turbo") !== -1),
 	      streamer: (msgTags.get('display-name').toLowerCase() === state.channel.toLowerCase()),
 	      action: action,
 	      text: joinedText,

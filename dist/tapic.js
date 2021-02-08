@@ -3,7 +3,7 @@
 * Twitch API & Chat in javascript.
 * @author Skhmt
 * @license MIT
-* @version 5.1.2
+* @version 5.1.3
 *
 * @module TAPIC
 */
@@ -651,11 +651,13 @@ if (typeof module == 'object') __nodeModule__ = module;
 	    let streams = false;
 	    let channels = false;
 	    let follows = false;
-	    let chatters = false;
 
 	    // api request removed due to twitch v3 api shutdown
 	    let community = true;
 	    let teams = true;
+	    
+	    // chatters api not works since corb change
+	    let chatters = true;
 
 	    function _pingFinished() {
 	      if (streams && channels && follows && chatters && community && teams) {
@@ -729,31 +731,6 @@ if (typeof module == 'object') __nodeModule__ = module;
 	        }
 
 	        follows = true;
-	        _pingFinished();
-	      }
-	    );
-
-	    // This is an undocumented/unsupported API - it hasn't been updated to v5. It uses channel NAME
-	    _getJSON(
-	      'https://tmi.twitch.tv/group/user/' + state.channel + '/chatters',
-	      function (res) {
-	        if (!__webpack_require__(2)) { // using JSONP with this API endpoint adds "data" to the object
-	          res = res.data;
-	        }
-
-	        if (!res || !res.chatters) {
-	          return;
-	          // console.error('No response from "tmi.twitch.tv/group/user/:channel/chatters". This will happen from time to time.');
-	        }
-	        state.currentViewCount = res.chatter_count;
-	        // .slice(); is to set by value rather than reference
-	        state.chatters.moderators = res.chatters.moderators.slice();
-	        state.chatters.staff = res.chatters.staff.slice();
-	        state.chatters.admins = res.chatters.admins.slice();
-	        state.chatters.global_mods = res.chatters.global_mods.slice();
-	        state.chatters.viewers = res.chatters.viewers.slice();
-
-	        chatters = true;
 	        _pingFinished();
 	      }
 	    );

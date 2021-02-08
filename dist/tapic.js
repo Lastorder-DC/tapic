@@ -3,7 +3,7 @@
 * Twitch API & Chat in javascript.
 * @author Skhmt
 * @license MIT
-* @version 5.1.3
+* @version 5.1.4
 *
 * @module TAPIC
 */
@@ -1346,10 +1346,16 @@ if (typeof module == 'object') __nodeModule__ = module;
 	  * Gets the current chatters in the channel. The returned object has 5 arrays: moderators, staff, admins, global_mods, and viewers. The arrays are simple lists of the viewers that belong to each category.
 	  * @return {object} An object of arrays.
 	  * @function getChatters
+	  * @deprecated unofficial api chatters removed and this function will always return empty array.
 	  */
 	  TAPIC.getChatters = function () {
-	    if (!state.channel) return console.error('Not in a channel.');
-	    return state.chatters;
+	    var tmp_obj = {};
+	    tmp_obj.moderators = [];
+	    tmp_obj.staff = [];
+	    tmp_obj.admins = [];
+	    tmp_obj.global_mods = [];
+	    tmp_obj.viewers = [];
+	    return tmp_obj;
 	  };
 
 	  /**
